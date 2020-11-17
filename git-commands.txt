@@ -1,0 +1,53 @@
+How to uncommit my last commit in Git
+=====================================
+
+To keep the changes from the commit you want to undo
+	git reset --soft HEAD^
+
+To destroy the changes from the commit you want to undo
+	git reset --hard HEAD^
+
+You can also say to go back 2 commits.
+	git reset --soft HEAD~2
+
+
+To see what changes I did to git structure
+==========================================
+#git reflog
+1f6a0a4fca (HEAD -> devel-branchl, origin/devel-branchl) HEAD@{0}: reset: moving to HEAD~1
+2763489700 HEAD@{1}: commit (amend): temp: new commit
+c86444e52e HEAD@{2}: commit (amend): temp: new commit
+996a11d241 HEAD@{3}: commit (amend): temp: new commit
+706500c8c0 HEAD@{4}: commit (amend): temp: new commit
+a06f1b8f12 HEAD@{5}: commit: temp: new commit
+1f6a0a4fca (HEAD -> devel-branchl, origin/devel-branchl) HEAD@{6}: pull --rebase: Fast-forward
+d3645a752b HEAD@{7}: rebase finished: returning to refs/heads/devel-branchl
+
+
+Undoing a git rebase
+====================
+Method 1:
+find the head commit of the branch as it was immediately before the rebase started in the reflog
+	git reflog
+
+reset the current branch to it
+	git reset --hard HEAD@{5}      <<-- Say you need to be at commit 5
+
+You can check the history of the candidate old head by just doing
+	git log HEAD@{5}
+
+Method 2:
+If you were in middle of rebase, the use
+	git rebase --abort
+
+Method 3:
+Rebase saves your starting point to ORIG_HEAD so this is usually as simple as
+	git reset --hard ORIG_HEAD
+
+Note: However, the reset, rebase and merge all save your original HEAD pointer into ORIG_HEAD so,
+	if you've done any of those commands since the rebase you're trying to undo then you'll have to use the reflog
+
+Take a backup of the git before rebasing
+========================================
+	git tag BACKUP
+	git reset --hard BACKUP
